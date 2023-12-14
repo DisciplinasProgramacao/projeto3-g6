@@ -324,4 +324,35 @@ public class Estacionamento implements Observable, IDataToText {
         return data.toString();
     }
 
+    public void estacionarComServicos(String placaVeiculo, TipoCliente tipoCliente, LocalDateTime entrada, LocalDateTime saida, Servico... servicos) throws Exception {
+        Cliente cliente = buscarClientePorTipo(tipoCliente);
+        if (cliente != null) {
+            Veiculo veiculo = buscarVeiculoPorPlaca(placaVeiculo);
+            if (veiculo != null) {
+                double valorEstacionamento = estacionar(placaVeiculo, tipoCliente, entrada, saida);
+                double valorServicos = 0;
+    
+                for (Servico servico : servicos) {
+                    if (tipoCliente == TipoCliente.HORISTA) {
+                        valorServicos += servico.getPreco();
+                    } else if (tipoCliente == TipoCliente.TURNO_MANHA && servico == Servico.LAVAGEM) {
+                        valorServicos += servico.getPreco();
+                    } else if (tipoCliente == TipoCliente.TURNO_TARDE && servico == Servico.POLIMENTO) {
+                        valorServicos += servico.getPreco();
+                    } else if (tipoCliente == TipoCliente.TURNO_NOITE && servico == Servico.MANOBRISTA) {
+                        valorServicos += servico.getPreco();
+                    }
+                }
+    
+                System.out.println("Veículo estacionado com sucesso!");
+                System.out.println("Valor do estacionamento: " + valorEstacionamento);
+                System.out.println("Valor dos serviços: " + valorServicos);
+                System.out.println("Total a pagar: " + (valorEstacionamento + valorServicos));
+            } else {
+                System.out.println("Veículo não encontrado.");
+            }
+        } else {
+            System.out.println("Cliente não encontrado.");
+        }
+    }
 }

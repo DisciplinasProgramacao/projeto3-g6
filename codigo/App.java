@@ -139,19 +139,32 @@ public class App {
                     estacionamento.addVeiculo(novoVeiculo, idVeiculoCliente);
                     System.out.println("Veículo adicionado ao cliente!");
                     break;
-                case 3:
+                    case 3:
                     System.out.print("Digite a placa do veículo: ");
                     String placaEstacionar = scanner.nextLine();
                     System.out.print("Digite o ID do cliente: ");
                     String idClienteEstacionar = scanner.nextLine();
-
+                
                     // Recupera o cliente pelo ID
                     Cliente clienteEstacionar = estacionamento.buscarClientePorId(idClienteEstacionar);
-
+                
                     if (clienteEstacionar != null) {
                         try {
-                            estacionamento.estacionar(placaEstacionar, clienteEstacionar.getTipoCliente());
-                            System.out.println("Veículo estacionado com sucesso!");
+                            System.out.println("Escolha os serviços:");
+                            for (Servico servico : Servico.values()) {
+                                System.out.println(servico.ordinal() + 1 + ". " + servico.name());
+                            }
+                            System.out.print("Digite os números dos serviços separados por espaço: ");
+                            String[] escolhaServicos = scanner.nextLine().split(" ");
+                            Servico[] servicosEscolhidos = new Servico[escolhaServicos.length];
+                            for (int i = 0; i < escolhaServicos.length; i++) {
+                                servicosEscolhidos[i] = Servico.values()[Integer.parseInt(escolhaServicos[i]) - 1];
+                            }
+                
+                            LocalDateTime entrada = LocalDateTime.now();
+                            LocalDateTime saida = entrada.plusHours(3); // Adicione a lógica para definir a hora de saída
+                
+                            estacionamento.estacionarComServicos(placaEstacionar, clienteEstacionar.getTipoCliente(), entrada, saida, servicosEscolhidos);
                         } catch (Exception e) {
                             System.out.println("Erro ao estacionar veículo: " + e.getMessage());
                         }
@@ -159,7 +172,7 @@ public class App {
                         System.out.println("Cliente não encontrado.");
                     }
                     break;
-
+                
                 case 4:
                     System.out.print("Digite a placa do veículo: ");
                     String placaRetirar = scanner.nextLine();
