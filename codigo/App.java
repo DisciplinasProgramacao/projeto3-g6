@@ -1,5 +1,6 @@
 
 import java.time.LocalDateTime;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class App {
@@ -102,12 +103,18 @@ public class App {
             System.out.println("11. Apresentar dados: Cliente");
             System.out.println("12. Pesquisar Histórico de Cliente");
             System.out.println("13. Apresentar dados: estacionamento");
+            System.out.println("14. Mudar Plano");
             System.out.println("0. Sair do Programa");
             System.out.print("Escolha uma opção: ");
 
-            int opcao = scanner.nextInt();
-            scanner.nextLine(); // Limpar o buffer
-
+            int opcao;
+            try {
+                opcao = scanner.nextInt();
+            } catch (InputMismatchException i) {
+                opcao = -1;
+            } finally {
+                scanner.nextLine();
+            }
             switch (opcao) {
                 case 1:
                     System.out.print("Digite o nome do cliente: ");
@@ -149,24 +156,35 @@ public class App {
                     Cliente clienteEstacionar = estacionamento.buscarClientePorId(idClienteEstacionar);
                 
                     if (clienteEstacionar != null) {
-                        try {
-                            System.out.println("Escolha os serviços:");
-                            for (Servico servico : Servico.values()) {
-                                System.out.println(servico.ordinal() + 1 + ". " + servico.name());
-                            }
-                            System.out.print("Digite os números dos serviços separados por espaço: ");
-                            String[] escolhaServicos = scanner.nextLine().split(" ");
-                            Servico[] servicosEscolhidos = new Servico[escolhaServicos.length];
-                            for (int i = 0; i < escolhaServicos.length; i++) {
-                                servicosEscolhidos[i] = Servico.values()[Integer.parseInt(escolhaServicos[i]) - 1];
-                            }
+                        System.out.println("Deseja escolher um serviço? (S/N): ");
+                        String escolherServico = scanner.nextLine();
                 
-                            LocalDateTime entrada = LocalDateTime.now();
-                            LocalDateTime saida = entrada.plusHours(3); // Adicione a lógica para definir a hora de saída
+                        if (escolherServico.equalsIgnoreCase("S")) {
+                            try {
+                                System.out.println("Escolha o serviço:");
+                                for (Servico servico : Servico.values()) {
+                                    System.out.println(servico.ordinal() + 1 + ". " + servico.name() + " - Preço: " + servico.getPreco() + " - Tempo Mínimo: " + servico.getTempoMinimo() + " minutos");
+                                }
+                                System.out.print("Escolha o serviço: ");
+                                int servicoEscolhido = scanner.nextInt();
+                                scanner.nextLine(); // Limpar o buffer
                 
-                            estacionamento.estacionarComServicos(placaEstacionar, clienteEstacionar.getTipoCliente(), entrada, saida, servicosEscolhidos);
-                        } catch (Exception e) {
-                            System.out.println("Erro ao estacionar veículo: " + e.getMessage());
+                                Servico servicoSelecionado = Servico.values()[servicoEscolhido - 1];
+                
+                                estacionamento.estacionarComServicos(placaEstacionar, clienteEstacionar.getTipoCliente(), servicoSelecionado); // Altere o método estacionar para aceitar o serviço escolhido
+                                System.out.println("Veículo estacionado com sucesso!");
+                            } catch (Exception e) {
+                                System.out.println("Erro ao estacionar veículo: " + e.getMessage());
+                            }
+                        } else if (escolherServico.equalsIgnoreCase("N")) {
+                            try {
+                                estacionamento.estacionar(placaEstacionar, clienteEstacionar.getTipoCliente()); // Modifique o método estacionar para aceitar cliente e placa apenas
+                                System.out.println("Veículo estacionado com sucesso!");
+                            } catch (Exception e) {
+                                System.out.println("Erro ao estacionar veículo: " + e.getMessage());
+                            }
+                        } else {
+                            System.out.println("Opção inválida!");
                         }
                     } else {
                         System.out.println("Cliente não encontrado.");
@@ -181,7 +199,7 @@ public class App {
 
                     // Recupera o cliente pelo ID
                     Cliente clienteRetirar = estacionamento.buscarClientePorId(idClienteRetirar);
-
+                                                                                         
                     if (clienteRetirar != null) {
                         try {
                             double valorPago = estacionamento.sair(placaRetirar, clienteRetirar.getTipoCliente());
@@ -247,6 +265,24 @@ public class App {
                     } else {
                         System.out.println("Cliente não encontrado!");
                     }
+                    break;
+                case 14:
+                    System.out.print("Digite o ID do cliente: ");
+                    String id = scanner.nextLine();
+
+                    // Recupera o cliente pelo ID
+                    Cliente cliente = estacionamento.buscarClientePorId(id);
+                    System.out.println("Escolha o novo plano: ");
+                    for (TipoCliente tipo : TipoCliente.values()) {
+                        System.out.println(tipo.ordinal() + 1 + ". " + tipo.name());
+                    }
+                    System.out.print("Escolha o novo plano: ");
+                    int novoPlanoEscolhido = scanner.nextInt();
+                    scanner.nextLine(); // Limpar o buffer
+
+                    TipoCliente novoPlanoSelecionado = TipoCliente.values()[novoPlanoEscolhido - 1];
+                    cliente.escolherPlano(novoPlanoSelecionado);
+                    System.out.println("Plano alterado com sucesso!");
                     break;
                 case 0:
                     continua = false;

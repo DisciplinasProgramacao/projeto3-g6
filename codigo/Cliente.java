@@ -109,6 +109,6 @@ public class Cliente implements IDataToText {
     }
 
     public TipoCliente getTipoCliente() {
-        return null;
+        return tipoCliente;
     }
 }

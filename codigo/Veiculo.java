@@ -6,6 +6,7 @@ public class Veiculo implements IDataToText {
 
     String placa;
     private List<UsoDeVaga> usos;
+    TipoCliente tipo;
 
     /**
      * Construtor para criar um Veículo com uma placa e um número máximo de usos.
@@ -39,60 +40,51 @@ public class Veiculo implements IDataToText {
         vaga.estacionar();
         usos.add(novoUso);
     }
-
-    public void estacionar(Vaga vaga, TipoCliente tipoCliente, LocalDateTime entrada, LocalDateTime saida) {
+    public void estacionar(Vaga vaga, TipoCliente tipoCliente, Servico servico) {
         UsoDeVaga novoUso;
 
         // Escolhe o tipo de uso de vaga baseado no tipo de cliente
         if (tipoCliente == TipoCliente.MENSALISTA) {
-            novoUso = new UsoMensalista(vaga, entrada, saida);
+            novoUso = new UsoMensalista(vaga, servico);
         } else if (tipoCliente == TipoCliente.HORISTA) {
-            novoUso = new UsoHorista(vaga, entrada, saida);
+            novoUso = new UsoHorista(vaga, servico);
         } else {
-            novoUso = new UsoTurno(vaga, tipoCliente, entrada, saida);
+            novoUso = new UsoTurno(vaga, servico, tipoCliente);
         }
 
         // Estaciona o veículo na vaga e associa o novo uso ao veículo
         vaga.estacionar();
         usos.add(novoUso);
     }
-    /**
-     * Realiza a saída do veículo do estacionamento.
-     * 
-     * @param tipoCliente O tipo de cliente (Mensalista, Horista, Turno)
-     * @return O valor total a ser pago pelo uso da vaga durante a saída
-     * @throws Exception Lança uma exceção se o veículo não estiver estacionado
-     */
+
+    public void estacionar(Vaga vaga, TipoCliente tipoCliente, LocalDateTime entrada, LocalDateTime saida, Servico servico) {
+        UsoDeVaga novoUso;
+
+        switch (tipoCliente) {
+            case MENSALISTA:
+                novoUso = new UsoMensalista(vaga, entrada, saida);
+                break;
+            case HORISTA:
+                novoUso = new UsoHorista(vaga, entrada, saida);
+                break;
+            default:
+                novoUso = new UsoTurno(vaga, tipoCliente, entrada, saida);
+                break;
+        }
+
+        vaga.estacionar();
+        usos.add(novoUso);
+    }
+
     public double sair(TipoCliente tipoCliente) throws Exception {
         double totalPago = 0.0;
+
         for (UsoDeVaga usoVaga : usos) {
             if (usoVaga != null && usoVaga.getSaida() == null) {
-                if (usoVaga.getEntrada() == null) {
-                    throw new Exception("Veículo não foi estacionado para poder sair.");
-                }
-                switch (tipoCliente) {
-                    case MENSALISTA:
-                        if (usoVaga instanceof UsoMensalista) {
-                            totalPago += ((UsoMensalista) usoVaga).sair();
-                        }
-                        break;
-
-                    case TURNO_MANHA:
-                    case TURNO_TARDE:
-                    case TURNO_NOITE:
-                        if (usoVaga instanceof UsoTurno) {
-                            totalPago += ((UsoTurno) usoVaga).sair();
-                        }
-                        break;
-
-                    case HORISTA:
-                        if (usoVaga instanceof UsoHorista) {
-                            totalPago += ((UsoHorista) usoVaga).sair();
-                        }
-                        break;
-                }
+                totalPago += usoVaga.sair();
             }
         }
+
         return totalPago;
     }
 
@@ -169,4 +161,7 @@ public class Veiculo implements IDataToText {
         return placa;
     }
 
+    public void definirTipo(TipoCliente tipo){
+        this.tipo = tipo;
+    }
 }
