@@ -1,17 +1,65 @@
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+/**
+ * Classe que representa um Observador para o Estacionamento.
+ */
 public class ObservadorEstacionamento implements Observer {
-    private String ultimoTop5; // Variável para armazenar o último Top 5
+    private Map<Integer, Map<String, Double>> clientesMes = new HashMap<Integer, Map<String, Double>>();
 
+    /**
+     * Método chamado quando há uma atualização no Top 5.
+     *
+     * @param top5 String contendo as informações do Top 5 atualizado.
+     */
     @Override
-    public void atualizar(String top5) {
-        // Salva o novo Top 5
-        this.ultimoTop5 = top5;
+    public void atualizar(Integer mes, Cliente c) {
 
-        // Imprime a mensagem no console (ou realiza outra ação com o novo Top 5)
-        System.out.println("Atualização no Top 5 Clientes:\n" + top5);
+        if (!this.clientesMes.containsKey(mes)) {
+            this.clientesMes.put(mes, new HashMap<String, Double>());
+        }
+
+        Map<String, Double> clientes = this.clientesMes.get(mes);
+        clientes.put(c.getNome(), c.arrecadadoNoMes(mes));
+        this.clientesMes.put(mes, clientes);
+
     }
 
-    // Método para obter o último Top 5 salvo pelo observador
-    public String getUltimoTop5() {
-        return this.ultimoTop5;
+    /**
+     * Obtém o último Top 5 salvo pelo observador.
+     *
+     * @return Último Top 5 atualizado.
+     */
+    public String getUltimoTop5(Integer mes) {
+        List<Map.Entry<String, Double>> listaEntradas = new ArrayList<>(this.clientesMes.get(mes).entrySet());
+
+
+        listaEntradas.sort(Map.Entry.comparingByValue(Collections.reverseOrder()));
+        Map<String, Double> hashMapOrdenado = new LinkedHashMap<>();
+        for (Map.Entry<String, Double> entry : listaEntradas) {
+            hashMapOrdenado.put(entry.getKey(), entry.getValue());
+        }
+
+        StringBuilder result = new StringBuilder("Top 5 Clientes em " + mes + ":\n");
+        Integer i = 0;
+        for (Map.Entry<String, Double> entry : hashMapOrdenado.entrySet()) {
+            if (i == 5) {
+                break;
+            }
+            result.append(i + 1)
+                    .append(". ")
+                    .append(entry.getKey())
+                    .append(" - Valor: ")
+                    .append(entry.getValue())
+                    .append("\n");
+            i++;
+        }
+
+        return result.toString();
     }
+
+    
 }

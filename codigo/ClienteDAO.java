@@ -2,49 +2,50 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Classe ClienteDAO implementa um Data Access Object para manipulação de objetos Cliente em um arquivo.
+ */
 public class ClienteDAO implements DAO<Cliente> {
-    private String nomeArq;
-    private Scanner arqLeitura;
-    private FileWriter arqEscrita;
+    private String nomeArquivo;
+    private Scanner leitorArquivo;
+    private FileWriter escritorArquivo;
 
     /**
      * Construtor da classe ClienteDAO.
-     * 
-     * @param nomeArq O nome do arquivo a ser manipulado pelo DAO.
+     * @param nomeArquivo O nome do arquivo a ser manipulado pelo DAO.
      */
-    public ClienteDAO(String nomeArq) {
-        this.nomeArq = nomeArq;
-        this.arqEscrita = null;
-        this.arqLeitura = null;
+    public ClienteDAO(String nomeArquivo) {
+        this.nomeArquivo = nomeArquivo;
+        this.escritorArquivo = null;
+        this.leitorArquivo = null;
     }
 
     /**
      * Abre o arquivo para leitura.
-     * 
      * @throws IOException Exceção lançada em caso de erro na abertura do arquivo.
      */
     public void abrirLeitura() throws IOException {
-        if (arqEscrita != null) {
-            arqEscrita.close();
-            arqEscrita = null;
+        if (escritorArquivo != null) {
+            escritorArquivo.close();
+            escritorArquivo = null;
         }
-        arqLeitura = new Scanner(new File(nomeArq), Charset.forName("UTF-8"));
+        leitorArquivo = new Scanner(new File(nomeArquivo), Charset.forName("UTF-8"));
     }
 
     /**
      * Abre o arquivo para escrita.
-     * 
      * @throws IOException Exceção lançada em caso de erro na abertura do arquivo.
      */
     public void abrirEscrita() throws IOException {
-        if (arqLeitura != null) {
-            arqLeitura.close();
-            arqLeitura = null;
+        if (leitorArquivo != null) {
+            leitorArquivo.close();
+            leitorArquivo = null;
         }
-        arqEscrita = new FileWriter(nomeArq, Charset.forName("UTF-8"), true);
+        escritorArquivo = new FileWriter(nomeArquivo, Charset.forName("UTF-8"), true);
     }
 
     /**
@@ -52,92 +53,85 @@ public class ClienteDAO implements DAO<Cliente> {
      */
     public void fechar() {
         try {
-            if (arqEscrita != null) {
-                arqEscrita.close();
+            if (escritorArquivo != null) {
+                escritorArquivo.close();
             }
-            if (arqLeitura != null) {
-                arqLeitura.close();
+            if (leitorArquivo != null) {
+                leitorArquivo.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            arqEscrita = null;
-            arqLeitura = null;
+            escritorArquivo = null;
+            leitorArquivo = null;
         }
     }
 
     /**
      * Obtém o próximo registro do arquivo e cria um objeto Cliente com os dados lidos.
-     * 
      * @return Um objeto Cliente lido do arquivo, ou null se não houver mais registros.
      */
     public Cliente getNext() {
-        if (arqLeitura.hasNext()) {
-            String[] linha = arqLeitura.nextLine().split(" ");
-            String nome = linha[1].toLowerCase();
+        if (leitorArquivo != null && leitorArquivo.hasNext()) {
+            String[] linha = leitorArquivo.nextLine().split(" ");
             String id = linha[0];
-            String tipoClienteString = linha[2].toUpperCase();
-            
-            TipoCliente tipoCliente = TipoCliente.valueOf(tipoClienteString); // Converte a string para a enumeração TipoCliente
-        
+            String nome = linha[1].toLowerCase();
+            TipoCliente tipoCliente = TipoCliente.valueOf(linha[2].toUpperCase());
+
             return new Cliente(nome, id, tipoCliente);
         }
         return null;
     }
 
+
     /**
      * Adiciona um objeto Cliente ao arquivo.
-     * 
-     * @param dado O objeto Cliente a ser adicionado ao arquivo.
+     * @param cliente O objeto Cliente a ser adicionado ao arquivo.
      * @throws IOException Exceção lançada em caso de erro na escrita do arquivo.
      */
-    public void add(Cliente dado) throws IOException {
+    public void add(Cliente cliente) throws IOException {
         abrirEscrita();
-        arqEscrita.append(dado.dataToText() + "\n");
+        escritorArquivo.append(cliente.dataToText()).append("\n");
         fechar();
     }
 
     /**
      * Obtém todos os registros do arquivo e os retorna em um array de Clientes.
-     * 
      * @return Um array de Clientes contendo todos os registros do arquivo.
      */
-    public Cliente[] getAll() {
-        int TAM_MAX = 10000;
-        int cont = 0;
-        Cliente[] dados = new Cliente[TAM_MAX];
+    public Cliente[] getAll() {       
+        List<Cliente> dados = new ArrayList<>();
+        
         try {
             fechar();
             abrirLeitura();
-            while (arqLeitura.hasNext()) {
+            
+            while (leitorArquivo != null && leitorArquivo.hasNext()) {
                 Cliente cliente = this.getNext();
                 if (cliente != null) {
-                    dados[cont] = cliente;
-                    cont++;
+                    dados.add(cliente);
                 }
             }
         } catch (IOException exception) {
             exception.printStackTrace();
-            dados = null;
         } finally {
             fechar();
         }
-        dados = Arrays.copyOf(dados, cont);
-        return dados;
+        
+        return dados.toArray(new Cliente[0]);
     }
 
     /**
      * Adiciona vários objetos Cliente ao arquivo.
-     * 
-     * @param dados Um array de Clientes a ser adicionado ao arquivo.
+     * @param clientes Um array de Clientes a ser adicionado ao arquivo.
      */
-    public void addAll(Cliente[] dados) {
+    public void addAll(Cliente[] clientes) {
         try {
             fechar();
             abrirEscrita();
-            for (Cliente cliente : dados) {
+            for (Cliente cliente : clientes) {
                 if (cliente != null) {
-                    arqEscrita.append(cliente.dataToText() + "\n");
+                    escritorArquivo.append(cliente.dataToText()).append("\n");
                 }
             }
         } catch (IOException e) {

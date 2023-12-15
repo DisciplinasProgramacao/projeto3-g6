@@ -1,6 +1,5 @@
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,7 @@ import java.util.PriorityQueue;
 /**
  * Classe que representa um estacionamento.
  */
-public class Estacionamento implements Observable, IDataToText {
+public class Estacionamento implements Observable<Cliente>, IDataToText {
     private String nome;
     private Map<String, Cliente> clientes; // Mapa de clientes usando o ID como chave
     private Vaga[] vagas;
@@ -110,8 +109,15 @@ public class Estacionamento implements Observable, IDataToText {
             throw new Exception("Carro já está estacionado");
         }
     }
-    
 
+    /**
+     * Estaciona um veículo no estacionamento com a inclusão de serviços.
+     *
+     * @param veiculo            Veículo a ser estacionado.
+     * @param servicoSelecionado Serviço selecionado para o veículo.
+     * @throws Exception Se o veículo já estiver estacionado ou ocorrer um erro no
+     *                   processo.
+     */
     public void estacionarComServicos(Veiculo veiculo, Servico servicoSelecionado) throws Exception {
         boolean estacionado = false;
         Cliente clienteEstacionado = null;
@@ -197,37 +203,7 @@ public class Estacionamento implements Observable, IDataToText {
         this.clientes.remove(idCli); // Remove o cliente do mapa usando o ID como chave
     }
 
-    /**
-     * Retorna os cinco principais clientes do estacionamento em um determinado mês.
-     *
-     * @param mes Mês para o qual se deseja obter os principais clientes.
-     * @return Lista com os dados dos cinco principais clientes no formato de texto.
-     */
-    public String top5Clientes(int mes) {
-        // Criar uma lista ordenada dos clientes com base na arrecadação no mês fornecido
-        List<Cliente> topClientes = new ArrayList<>(clientes.values());
-        topClientes.sort(Comparator.comparingDouble(cliente -> -cliente.arrecadadoNoMes(mes)));
-    
-        // Selecionar os cinco principais clientes ou todos, caso haja menos de cinco
-        int count = Math.min(5, topClientes.size());
-        StringBuilder result = new StringBuilder("Top 5 Clientes em " + mes + ":\n");
-        for (int i = 0; i < count; i++) {
-            Cliente cliente = topClientes.get(i);
-            result.append(i + 1)
-                    .append(". ")
-                    .append(cliente.getNome())
-                    .append(" - Valor: ")
-                    .append(cliente.arrecadadoNoMes(mes))
-                    .append("\n");
-        }
-    
-        String top5 = result.toString(); // Supondo que 'result' é a lista dos top 5 clientes
-    
-        notify(top5); // Notifica os observadores sobre a atualização no top 5
-    
-        return top5;
-    }
-    
+   
 
     /**
      * Busca um cliente pelo ID.
@@ -248,30 +224,28 @@ public class Estacionamento implements Observable, IDataToText {
      * Remove um veículo estacionado do estacionamento.
      * 
      * @param placa Placa do veículo a ser removido.
-     * @param tipo  Tipo do cliente.
      * @return double valor pago
      * @throws Exception
      */
     public double sair(String placa) throws Exception {
+        // Obtém o mês atual do sistema
+        LocalDateTime dataAtual = LocalDateTime.now();
+        int mesAtual = dataAtual.getMonthValue();  
+           
         double valorPago = -1.0; // Definir um valor padrão para indicar que o veículo não foi encontrado
 
         for (Cliente cliente : clientes.values()) {
             Veiculo veiculo = cliente.possuiVeiculo(placa);
 
-            if (veiculo != null) {
-                valorPago = veiculo.sair(); // Atualizar o horário de saída
+            if (veiculo == null) {
+                continue;
             }
+            valorPago = veiculo.sair();
+            notify(mesAtual, cliente); // Notifica os observadores sobre a atualização no top 5 usando o mês atual
         }
         if (valorPago < 0.0) {
             throw new Exception("Veículo não estacionado");
-        }
-
-        // Obtém o mês atual do sistema
-        LocalDateTime dataAtual = LocalDateTime.now();
-        int mesAtual = dataAtual.getMonthValue();
-
-        notify(top5Clientes(mesAtual)); // Notifica os observadores sobre a atualização no top 5 usando o mês atual
-
+        }     
         return valorPago;
     }
 
@@ -302,9 +276,9 @@ public class Estacionamento implements Observable, IDataToText {
      *             texto.
      */
     @Override
-    public void notify(String top5) {
+    public void notify(Integer mes, Cliente c) {
         for (Observer observer : top5Observers) {
-            observer.atualizar(top5);
+            observer.atualizar(mes, c);
         }
     }
 
@@ -326,12 +300,19 @@ public class Estacionamento implements Observable, IDataToText {
         return data.toString();
     }
 
-    public Veiculo buscarVeiculo(String placa) throws Exception{
+    /**
+     * Busca um veículo pelo número da placa.
+     *
+     * @param placa Placa do veículo a ser buscado.
+     * @return Veículo correspondente à placa ou null se não encontrado.
+     * @throws Exception Se o veículo não for encontrado.
+     */
+    public Veiculo buscarVeiculo(String placa) throws Exception {
         for (Cliente cliente : clientes.values()) {
             Veiculo v = cliente.possuiVeiculo(placa);
-            if(v != null){
+            if (v != null) {
                 return v;
-            }            
+            }
         }
         throw new Exception("Nao encontrado veiculo");
     }

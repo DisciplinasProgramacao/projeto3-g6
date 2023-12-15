@@ -122,6 +122,7 @@ public class Cliente implements IDataToText {
     public String toString() {
         return id + ";" + nome;
     }
+    
 
     /**
      * Pesquisa o histórico de arrecadação de um veículo associado ao cliente em um

@@ -5,6 +5,8 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) throws Exception {
         Estacionamento estacionamento = new Estacionamento("estacionamento ABC", 5, 10);
+        ObservadorEstacionamento observador = new ObservadorEstacionamento();
+        estacionamento.attatch(observador);
         Scanner scanner = new Scanner(System.in);
 
         // Carga de dados para clientes
@@ -203,7 +205,8 @@ public class App {
                 case 9:
                     System.out.print("Digite o mês para o top 5: ");
                     int mesTop5 = scanner.nextInt();
-                    System.out.println(estacionamento.top5Clientes(mesTop5));
+                    String teste = observador.getUltimoTop5(mesTop5);
+                    System.out.println(teste);
                     break;
                 case 11:
                     System.out.print("Digite o ID do cliente: ");

@@ -29,3 +29,4 @@ public interface DAO<T extends IDataToText> {
      */
     public void addAll(T[] dados);
 }
+
