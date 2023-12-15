@@ -5,29 +5,58 @@ public class Cliente implements IDataToText {
     private Veiculo[] veiculos = new Veiculo[10];
     private TipoCliente tipoCliente;
 
-    // Construtor da classe Cliente
+    /**
+     * Construtor da classe Cliente.
+     *
+     * @param nome        O nome do cliente.
+     * @param id          O identificador único do cliente.
+     * @param tipoCliente O tipo do cliente (HORISTA, MENSALISTA, etc.).
+     */
     public Cliente(String nome, String id, TipoCliente tipoCliente) {
         this.nome = nome;
         this.id = id;
         this.tipoCliente = tipoCliente;
     }
 
-    // Método para adicionar um veículo ao cliente
-    public void addVeiculo(Veiculo veiculo) {
+    /**
+     * Adiciona um veículo à lista de veículos do cliente.
+     *
+     * @param veiculo O veículo a ser adicionado.
+     * @throws Exception Se o veículo com a mesma placa já existir para este
+     *                   cliente.
+     */
+    public void addVeiculo(Veiculo veiculo) throws Exception {
+        boolean placaExistente = false;
         if (veiculos != null) {
-            for (int i = 0; i < veiculos.length; i++) {
-                if (veiculos[i] == null) {
-                    veiculos[i] = veiculo;
+            for (Veiculo v : veiculos) {
+                if (v != null && v.getPlaca().equals(veiculo.getPlaca())) {
+                    placaExistente = true;
                     break;
                 }
+            }
+            if (!placaExistente) {
+                for (int i = 0; i < veiculos.length; i++) {
+                    if (veiculos[i] == null) {
+                        veiculos[i] = veiculo;
+                        veiculo.definirTipo(tipoCliente);
+                        break;
+                    }
+                }
+            } else {
+                throw new Exception("Veículo com placa igual já existe para este cliente.");
             }
         } else {
             veiculos[0] = veiculo;
         }
     }
 
-    // Método para verificar se o cliente possui um veículo com uma determinada
-    // placa
+    /**
+     * Verifica se o cliente possui um veículo com a placa fornecida.
+     *
+     * @param placa A placa do veículo a ser verificada.
+     * @return O veículo associado à placa, se existir; caso contrário, retorna
+     *         null.
+     */
     public Veiculo possuiVeiculo(String placa) {
         for (Veiculo veiculo : veiculos) {
             if (veiculo != null && veiculo.getPlaca().equals(placa)) {
@@ -37,7 +66,11 @@ public class Cliente implements IDataToText {
         return null;
     }
 
-    // Método para calcular o total de usos de veículos pelo cliente
+    /**
+     * Calcula o total de usos de veículos pelo cliente.
+     *
+     * @return O número total de usos de veículos pelo cliente.
+     */
     public int totalDeUsos() {
         int totalUsos = 0;
         for (Veiculo veiculo : veiculos) {
@@ -48,7 +81,11 @@ public class Cliente implements IDataToText {
         return totalUsos;
     }
 
-    // Método para calcular a arrecadação total do cliente
+    /**
+     * Calcula a arrecadação total do cliente.
+     *
+     * @return A arrecadação total do cliente.
+     */
     public double arrecadadoTotal() {
         double totalArrecadado = 0;
         for (Veiculo veiculo : veiculos) {
@@ -60,7 +97,12 @@ public class Cliente implements IDataToText {
         return totalArrecadado;
     }
 
-    // Método para calcular a arrecadação do cliente em um determinado mês
+    /**
+     * Calcula a arrecadação do cliente em um determinado mês.
+     *
+     * @param mes O mês para o qual se deseja calcular a arrecadação.
+     * @return A arrecadação do cliente no mês especificado.
+     */
     public double arrecadadoNoMes(int mes) {
         double arrecadadoNoMes = 0;
         for (Veiculo veiculo : veiculos) {
@@ -71,11 +113,24 @@ public class Cliente implements IDataToText {
         return arrecadadoNoMes;
     }
 
+    /**
+     * Converte os dados do cliente em uma representação textual.
+     *
+     * @return Uma representação textual dos dados do cliente.
+     */
     @Override
     public String toString() {
         return id + ";" + nome;
     }
 
+    /**
+     * Pesquisa o histórico de arrecadação de um veículo associado ao cliente em um
+     * mês específico.
+     *
+     * @param mes   O mês para o qual se deseja pesquisar o histórico.
+     * @param placa A placa do veículo para o qual se deseja pesquisar o histórico.
+     * @return A arrecadação do veículo associado ao cliente no mês especificado.
+     */
     public double pesquisarHistorico(int mes, String placa) {
         Veiculo veiculo = possuiVeiculo(placa);
         if (veiculo != null) {
@@ -84,14 +139,30 @@ public class Cliente implements IDataToText {
         return 0.0;
     }
 
+    /**
+     * Define o novo plano do cliente.
+     *
+     * @param novoTipoCliente O novo tipo de cliente a ser atribuído.
+     */
+
     public void escolherPlano(TipoCliente novoTipoCliente) {
         this.tipoCliente = novoTipoCliente;
     }
 
-    public String getId(){
+    /**
+     * Obtém o identificador único do cliente.
+     *
+     * @return O identificador único do cliente.
+     */
+    public String getId() {
         return id;
     }
 
+    /**
+     * Converte os dados do cliente para texto.
+     *
+     * @return Uma representação textual dos dados do cliente.
+     */
     @Override
     public String dataToText() {
         StringBuilder sb = new StringBuilder();
@@ -104,10 +175,20 @@ public class Cliente implements IDataToText {
         return sb.toString();
     }
 
+    /**
+     * Obtém o nome do cliente.
+     *
+     * @return O nome do cliente.
+     */
     public String getNome() {
         return this.nome;
     }
 
+    /**
+     * Obtém o tipo de cliente.
+     *
+     * @return O tipo de cliente (HORISTA, MENSALISTA, etc.).
+     */
     public TipoCliente getTipoCliente() {
         return tipoCliente;
     }

@@ -36,4 +36,5 @@ public class UsoHorista extends UsoDeVaga {
 
         return Math.min(valorPago, 50.0); // Limita o valor máximo a 50.0
     }
+
 }

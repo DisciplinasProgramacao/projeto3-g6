@@ -6,7 +6,8 @@ public class Veiculo implements IDataToText {
 
     String placa;
     private List<UsoDeVaga> usos;
-    TipoCliente tipo;
+    TipoCliente tipoCliente;
+    boolean estacionado;
 
     /**
      * Construtor para criar um Veículo com uma placa e um número máximo de usos.
@@ -16,6 +17,7 @@ public class Veiculo implements IDataToText {
     public Veiculo(String placa) {
         this.placa = placa;
         this.usos = new ArrayList<>();
+
     }
 
     /**
@@ -24,40 +26,46 @@ public class Veiculo implements IDataToText {
      * @param vaga        A vaga onde o veículo será estacionado
      * @param tipoCliente O tipo de cliente (Mensalista, Horista, Turno)
      */
-    public void estacionar(Vaga vaga, TipoCliente tipoCliente) {
+    public void estacionar(Vaga vaga, TipoCliente tipo) {
         UsoDeVaga novoUso;
-
-        // Escolhe o tipo de uso de vaga baseado no tipo de cliente
-        if (tipoCliente == TipoCliente.MENSALISTA) {
-            novoUso = new UsoMensalista(vaga);
-        } else if (tipoCliente == TipoCliente.HORISTA) {
-            novoUso = new UsoHorista(vaga);
-        } else {
-            novoUso = new UsoTurno(vaga, tipoCliente);
+        definirTipo(tipo);
+        switch (tipoCliente) {
+            case MENSALISTA:
+                novoUso = new UsoMensalista(vaga);
+                break;
+            case HORISTA:
+                novoUso = new UsoHorista(vaga);
+                break;
+            default:
+                novoUso = new UsoTurno(vaga, tipoCliente);
+                break;
         }
-
         // Estaciona o veículo na vaga e associa o novo uso ao veículo
         vaga.estacionar();
         usos.add(novoUso);
+        estacionado = true;
     }
-    public void estacionar(Vaga vaga, TipoCliente tipoCliente, Servico servico) {
+
+    public void estacionarComServicos(Vaga vaga, Servico servicoSelecionado) {
         UsoDeVaga novoUso;
 
-        // Escolhe o tipo de uso de vaga baseado no tipo de cliente
-        if (tipoCliente == TipoCliente.MENSALISTA) {
-            novoUso = new UsoMensalista(vaga, servico);
-        } else if (tipoCliente == TipoCliente.HORISTA) {
-            novoUso = new UsoHorista(vaga, servico);
-        } else {
-            novoUso = new UsoTurno(vaga, servico, tipoCliente);
+        switch (tipoCliente) {
+            case MENSALISTA:
+                novoUso = new UsoMensalista(vaga, servicoSelecionado); // Adicionando o serviço ao criar o uso
+                break;
+            case HORISTA:
+                novoUso = new UsoHorista(vaga, servicoSelecionado); // Adicionando o serviço ao criar o uso
+                break;
+            default:
+                novoUso = new UsoTurno(vaga, servicoSelecionado, tipoCliente); // Adicionando o serviço ao criar o uso
+                break;
         }
-
-        // Estaciona o veículo na vaga e associa o novo uso ao veículo
+        estacionado = true;
         vaga.estacionar();
         usos.add(novoUso);
     }
 
-    public void estacionar(Vaga vaga, TipoCliente tipoCliente, LocalDateTime entrada, LocalDateTime saida, Servico servico) {
+    public void estacionar(Vaga vaga, LocalDateTime entrada, LocalDateTime saida) {
         UsoDeVaga novoUso;
 
         switch (tipoCliente) {
@@ -71,12 +79,13 @@ public class Veiculo implements IDataToText {
                 novoUso = new UsoTurno(vaga, tipoCliente, entrada, saida);
                 break;
         }
-
         vaga.estacionar();
         usos.add(novoUso);
+        estacionado = true;
     }
 
-    public double sair(TipoCliente tipoCliente) throws Exception {
+    public double sair() throws Exception {
+
         double totalPago = 0.0;
 
         for (UsoDeVaga usoVaga : usos) {
@@ -84,7 +93,7 @@ public class Veiculo implements IDataToText {
                 totalPago += usoVaga.sair();
             }
         }
-
+        estacionado = false;
         return totalPago;
     }
 
@@ -161,7 +170,11 @@ public class Veiculo implements IDataToText {
         return placa;
     }
 
-    public void definirTipo(TipoCliente tipo){
-        this.tipo = tipo;
+    public void definirTipo(TipoCliente tipo) {
+        this.tipoCliente = tipo;
+    }
+
+    public boolean estaEstacionado() {
+        return this.estacionado;
     }
 }

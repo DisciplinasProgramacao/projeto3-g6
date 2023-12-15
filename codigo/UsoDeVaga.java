@@ -45,8 +45,9 @@ public abstract class UsoDeVaga implements IDataToText {
      * e os serviços contratados durante o uso da vaga.
      *
      * @return O valor total a ser pago pelo uso da vaga
+     * @throws Exception
      */
-    public double sair() {
+    public double sair() throws Exception {
         vaga.sair(); // Define a vaga como disponível
         this.saida = LocalDateTime.now(); // Registra a data e hora de saída
         int tempoPermanenciaMinutos = (int) entrada.until(saida, ChronoUnit.MINUTES); // Calcula o tempo de permanência em minutos
@@ -58,8 +59,7 @@ public abstract class UsoDeVaga implements IDataToText {
                 // Retorna o valor total a ser pago considerando o valor da vaga e o preço do serviço
                 return valorPago() + servico.getPreco();
             } else {
-                // Retorna apenas o valor da vaga, pois o tempo mínimo do serviço não foi atingido
-                return valorPago();
+               throw new Exception("Tempo minimo do servico nao atingido");
             }
         }
         // Retorna apenas o valor da vaga, pois nenhum serviço extra foi contratado

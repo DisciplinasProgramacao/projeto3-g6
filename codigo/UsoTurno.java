@@ -31,21 +31,23 @@ public class UsoTurno extends UsoDeVaga {
      */
     @Override
     public double valorPago() {
-        if (mesPago) {
-            // Se o mês estiver pago, verifica se está após o horário permitido
+        if (!mesPago) {
+            // Se o mês não estiver pago, verifica se está após o horário permitido
             if (tipoCliente.getHoraFim() != null) {
                 LocalTime horarioAtual = LocalTime.now();
                 if (horarioAtual.isAfter(tipoCliente.getHoraFim())) {
-                    // Se passou do horário do tipo de cliente, paga como horista
-                    return TipoCliente.HORISTA.getValor();
+                    UsoHorista usoHorista = new UsoHorista(vaga, entrada, saida);
+                    // Calcula o valor a ser pago para usoHorista com base no tempo excedido
+                    return usoHorista.valorPago();
                 }
             }
-            return 0; // Mês pago e dentro do horário do tipo de cliente
+            return 0; // Mês não está pago, mas dentro do horário do tipo de cliente
         } else {
-            // Mês não está pago, retorna o valor do tipo de cliente
+            // Mês está pago, retorna o valor do tipo de cliente
             return tipoCliente.getValor();
         }
     }
+    
 
     /**
      * Verifica se o mês está pago.

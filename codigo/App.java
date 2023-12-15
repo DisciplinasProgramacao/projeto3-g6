@@ -1,16 +1,15 @@
 
-import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Estacionamento estacionamento = new Estacionamento("estacionamento ABC", 5, 10);
         Scanner scanner = new Scanner(System.in);
 
         // Carga de dados para clientes
         Cliente cliente1 = new Cliente("João", "001", TipoCliente.HORISTA);
-        Cliente cliente2 = new Cliente("Maria", "002", TipoCliente.TURNO_MANHA);
+        Cliente cliente2 = new Cliente("Maria", "002", TipoCliente.TURNO_TARDE);
         Cliente cliente3 = new Cliente("Pedro", "003", TipoCliente.MENSALISTA);
         Cliente cliente4 = new Cliente("Ana", "004", TipoCliente.TURNO_TARDE);
         Cliente cliente5 = new Cliente("Carlos", "005", TipoCliente.TURNO_NOITE);
@@ -39,50 +38,33 @@ public class App {
         estacionamento.addVeiculo(veiculo6, "006");
 
         try {
-            LocalDateTime entradaJoao1 = LocalDateTime.of(2023, 1, 5, 9, 0);
-            LocalDateTime saidaJoao1 = LocalDateTime.of(2023, 1, 5, 12, 0);
+            estacionamento.estacionar(veiculo1);
+            estacionamento.estacionar(veiculo2);
+            estacionamento.estacionar(veiculo3);
+            estacionamento.estacionar(veiculo4);
+            estacionamento.estacionar(veiculo5);
+            estacionamento.estacionar(veiculo6);
 
-            LocalDateTime entradaJoao2 = LocalDateTime.of(2023, 1, 8, 14, 30);
-            LocalDateTime saidaJoao2 = LocalDateTime.of(2023, 1, 8, 18, 15);
+            estacionamento.sair(veiculo1.getPlaca());
+            estacionamento.sair(veiculo2.getPlaca());
+            estacionamento.sair(veiculo3.getPlaca());
+            estacionamento.sair(veiculo4.getPlaca());
+            estacionamento.sair(veiculo5.getPlaca());
+            estacionamento.sair(veiculo6.getPlaca());
 
-            LocalDateTime entradaJoao3 = LocalDateTime.of(2023, 1, 10, 19, 0);
-            LocalDateTime saidaJoao3 = LocalDateTime.of(2023, 1, 10, 20, 30);
+            estacionamento.estacionar(veiculo1);
+            estacionamento.estacionar(veiculo2);
+            estacionamento.estacionar(veiculo3);
+            estacionamento.estacionar(veiculo4);
+            estacionamento.estacionar(veiculo5);
+            estacionamento.estacionar(veiculo6);
 
-            estacionamento.estacionar("ABC1234", TipoCliente.HORISTA, entradaJoao1, saidaJoao1);
-            estacionamento.estacionar("ABC1234", TipoCliente.HORISTA, entradaJoao2, saidaJoao2);
-            estacionamento.estacionar("ABC1234", TipoCliente.HORISTA, entradaJoao3, saidaJoao3);
-
-            LocalDateTime entradaMaria1 = LocalDateTime.of(2023, 1, 6, 7, 0);
-            LocalDateTime saidaMaria1 = LocalDateTime.of(2023, 1, 6, 12, 0);
-
-            LocalDateTime entradaMaria2 = LocalDateTime.of(2023, 1, 9, 8, 30);
-            LocalDateTime saidaMaria2 = LocalDateTime.of(2023, 1, 9, 11, 45);
-
-            LocalDateTime entradaMaria3 = LocalDateTime.of(2023, 1, 12, 6, 0);
-            LocalDateTime saidaMaria3 = LocalDateTime.of(2023, 1, 12, 11, 0);
-
-            estacionamento.estacionar("DEF5678", TipoCliente.TURNO_MANHA, entradaMaria1, saidaMaria1);
-            estacionamento.estacionar("DEF5678", TipoCliente.TURNO_MANHA, entradaMaria2, saidaMaria2);
-            estacionamento.estacionar("DEF5678", TipoCliente.TURNO_MANHA, entradaMaria3, saidaMaria3);
-
-            LocalDateTime entradaCarlos1 = LocalDateTime.of(2023, 1, 7, 20, 0);
-            LocalDateTime saidaCarlos1 = LocalDateTime.of(2023, 1, 7, 23, 30);
-
-            LocalDateTime entradaCarlos2 = LocalDateTime.of(2023, 1, 11, 21, 45);
-            LocalDateTime saidaCarlos2 = LocalDateTime.of(2023, 1, 12, 1, 15);
-
-            estacionamento.estacionar("MNO7890", TipoCliente.TURNO_NOITE, entradaCarlos1, saidaCarlos1);
-            estacionamento.estacionar("MNO7890", TipoCliente.TURNO_NOITE, entradaCarlos2, saidaCarlos2);
-
-            LocalDateTime entradaAna1 = LocalDateTime.of(2023, 1, 8, 6, 30);
-            LocalDateTime saidaAna1 = LocalDateTime.of(2023, 1, 8, 11, 0);
-
-            LocalDateTime entradaAna2 = LocalDateTime.of(2023, 1, 10, 7, 15);
-            LocalDateTime saidaAna2 = LocalDateTime.of(2023, 1, 10, 10, 45);
-
-            estacionamento.estacionar("JKL3456", TipoCliente.TURNO_MANHA, entradaAna1, saidaAna1);
-            estacionamento.estacionar("JKL3456", TipoCliente.TURNO_MANHA, entradaAna2, saidaAna2);
-
+            estacionamento.sair(veiculo1.getPlaca());
+            estacionamento.sair(veiculo2.getPlaca());
+            estacionamento.sair(veiculo3.getPlaca());
+            estacionamento.sair(veiculo4.getPlaca());
+            estacionamento.sair(veiculo5.getPlaca());
+            estacionamento.sair(veiculo6.getPlaca());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,8 +83,8 @@ public class App {
             System.out.println("9. Top 5 Clientes");
             System.out.println("10. Sair do Programa");
             System.out.println("11. Apresentar dados: Cliente");
-            System.out.println("12. Pesquisar Histórico de Cliente");
-            System.out.println("13. Apresentar dados: estacionamento");
+            System.out.println("12. Apresentar dados: estacionamento");
+            System.out.println("13. Pesquisar Histórico de Cliente(Veiculo)");
             System.out.println("14. Mudar Plano");
             System.out.println("0. Sair do Programa");
             System.out.print("Escolha uma opção: ");
@@ -146,70 +128,59 @@ public class App {
                     estacionamento.addVeiculo(novoVeiculo, idVeiculoCliente);
                     System.out.println("Veículo adicionado ao cliente!");
                     break;
-                    case 3:
+                case 3:
                     System.out.print("Digite a placa do veículo: ");
                     String placaEstacionar = scanner.nextLine();
-                    System.out.print("Digite o ID do cliente: ");
-                    String idClienteEstacionar = scanner.nextLine();
-                
-                    // Recupera o cliente pelo ID
-                    Cliente clienteEstacionar = estacionamento.buscarClientePorId(idClienteEstacionar);
-                
-                    if (clienteEstacionar != null) {
-                        System.out.println("Deseja escolher um serviço? (S/N): ");
-                        String escolherServico = scanner.nextLine();
-                
-                        if (escolherServico.equalsIgnoreCase("S")) {
-                            try {
-                                System.out.println("Escolha o serviço:");
-                                for (Servico servico : Servico.values()) {
-                                    System.out.println(servico.ordinal() + 1 + ". " + servico.name() + " - Preço: " + servico.getPreco() + " - Tempo Mínimo: " + servico.getTempoMinimo() + " minutos");
-                                }
-                                System.out.print("Escolha o serviço: ");
-                                int servicoEscolhido = scanner.nextInt();
-                                scanner.nextLine(); // Limpar o buffer
-                
-                                Servico servicoSelecionado = Servico.values()[servicoEscolhido - 1];
-                
-                                estacionamento.estacionarComServicos(placaEstacionar, clienteEstacionar.getTipoCliente(), servicoSelecionado); // Altere o método estacionar para aceitar o serviço escolhido
-                                System.out.println("Veículo estacionado com sucesso!");
-                            } catch (Exception e) {
-                                System.out.println("Erro ao estacionar veículo: " + e.getMessage());
+                    System.out.println("Deseja escolher um serviço? (S/N): ");
+                    String escolherServico = scanner.nextLine();
+
+                    if (escolherServico.equalsIgnoreCase("S")) {
+                        try {
+                            System.out.println("Escolha o serviço:");
+                            for (Servico servico : Servico.values()) {
+                                System.out.println(servico.ordinal() + 1 + ". " + servico.name() + " - Preço: "
+                                        + servico.getPreco() + " - Tempo Mínimo: " + servico.getTempoMinimo()
+                                        + " minutos");
                             }
-                        } else if (escolherServico.equalsIgnoreCase("N")) {
-                            try {
-                                estacionamento.estacionar(placaEstacionar, clienteEstacionar.getTipoCliente()); // Modifique o método estacionar para aceitar cliente e placa apenas
-                                System.out.println("Veículo estacionado com sucesso!");
-                            } catch (Exception e) {
-                                System.out.println("Erro ao estacionar veículo: " + e.getMessage());
-                            }
-                        } else {
-                            System.out.println("Opção inválida!");
+                            System.out.print("Escolha o serviço: ");
+                            int servicoEscolhido = scanner.nextInt();
+                            scanner.nextLine();
+
+                            Servico servicoSelecionado = Servico.values()[servicoEscolhido - 1];
+                            Veiculo veiculo = estacionamento.buscarVeiculo(placaEstacionar);
+
+                            estacionamento.estacionarComServicos(veiculo, servicoSelecionado);
+                            estacionamento.estacionarComServicos(veiculo, servicoSelecionado);
+                            System.out.println("Veículo estacionado com sucesso!");
+                        } catch (Exception e) {
+                            System.out.println("Erro ao estacionar veículo: " + e.getMessage());
+                        }
+                    } else if (escolherServico.equalsIgnoreCase("N")) {
+                        try {
+                            Veiculo veiculo = estacionamento.buscarVeiculo(placaEstacionar);
+                            estacionamento.estacionar(veiculo); // Modifique o método estacionar para aceitar
+                                                                // cliente e placa apenas
+                            System.out.println("Veículo estacionado com sucesso!");
+                        } catch (Exception e) {
+                            System.out.println("Erro ao estacionar veículo: " + e.getMessage());
                         }
                     } else {
-                        System.out.println("Cliente não encontrado.");
+                        System.out.println("Opção inválida!");
                     }
+
                     break;
-                
+
                 case 4:
                     System.out.print("Digite a placa do veículo: ");
                     String placaRetirar = scanner.nextLine();
-                    System.out.print("Digite o ID do cliente: ");
-                    String idClienteRetirar = scanner.nextLine();
 
-                    // Recupera o cliente pelo ID
-                    Cliente clienteRetirar = estacionamento.buscarClientePorId(idClienteRetirar);
-                                                                                         
-                    if (clienteRetirar != null) {
-                        try {
-                            double valorPago = estacionamento.sair(placaRetirar, clienteRetirar.getTipoCliente());
-                            System.out.println("Veículo retirado. Valor a pagar: " + valorPago);
-                        } catch (Exception e) {
-                            System.out.println("Erro ao retirar veículo: " + e.getMessage());
-                        }
-                    } else {
-                        System.out.println("Cliente não encontrado.");
+                    try {
+                        double valorPago = estacionamento.sair(placaRetirar);
+                        System.out.println("Veículo retirado. Valor a pagar: " + valorPago);
+                    } catch (Exception e) {
+                        System.out.println("Erro ao retirar veículo: " + e.getMessage());
                     }
+
                     break;
 
                 case 5:

@@ -40,8 +40,9 @@ public class Estacionamento implements Observable, IDataToText {
      *
      * @param veiculo Veículo a ser adicionado.
      * @param idCli   ID do cliente ao qual o veículo será associado.
+     * @throws Exception
      */
-    public void addVeiculo(Veiculo veiculo, String idCli) {
+    public void addVeiculo(Veiculo veiculo, String idCli) throws Exception {
         Cliente cliente = clientes.get(idCli);
         if (cliente != null) {
             cliente.addVeiculo(veiculo);
@@ -80,17 +81,17 @@ public class Estacionamento implements Observable, IDataToText {
      * @param time  Horário de entrada do veículo.
      * @throws Exception Se o carro já estiver estacionado.
      */
-    public void estacionar(String placa, TipoCliente tipo) throws Exception {
+    public void estacionar(Veiculo veiculo) throws Exception {
         boolean estacionado = false;
         Cliente clienteEstacionado = null;
 
         for (Vaga vaga : filaPrioridades) {
             if (vaga.disponivel() && !estacionado) {
                 for (Cliente cliente : clientes.values()) {
-                    Veiculo veiculo = cliente.possuiVeiculo(placa);
-                    if (veiculo != null) {
+                    Veiculo v = cliente.possuiVeiculo(veiculo.getPlaca());
+                    if (v != null) {
                         clienteEstacionado = cliente;
-                        veiculo.estacionar(vaga, tipo);
+                        veiculo.estacionar(vaga, clienteEstacionado.getTipoCliente());
                         estacionado = true;
                         break;
                     }
@@ -109,26 +110,19 @@ public class Estacionamento implements Observable, IDataToText {
             throw new Exception("Carro já está estacionado");
         }
     }
+    
 
-    /**
-     * Estaciona um veículo no estacionamento com data determinada.
-     *
-     * @param placa   Placa do veículo a ser estacionado.
-     * @param tipo    Tipo de cliente.
-     * @param entrada Horário de entrada do veículo.
-     * @param saida   Horário de saída do veículo.
-     * @throws Exception Se o carro já estiver estacionado.
-     */
-    public void estacionar(String placa, TipoCliente tipo, LocalDateTime entrada, LocalDateTime saida)
-            throws Exception {
+    public void estacionarComServicos(Veiculo veiculo, Servico servicoSelecionado) throws Exception {
         boolean estacionado = false;
+        Cliente clienteEstacionado = null;
 
         for (Vaga vaga : filaPrioridades) {
             if (vaga.disponivel() && !estacionado) {
                 for (Cliente cliente : clientes.values()) {
-                    Veiculo veiculo = cliente.possuiVeiculo(placa);
-                    if (veiculo != null) {
-                        veiculo.estacionar(vaga, tipo, entrada, saida, null);
+                    Veiculo v = cliente.possuiVeiculo(veiculo.getPlaca());
+                    if (v != null) {
+                        clienteEstacionado = cliente;
+                        veiculo.estacionarComServicos(vaga, servicoSelecionado);
                         estacionado = true;
                         break;
                     }
@@ -138,7 +132,12 @@ public class Estacionamento implements Observable, IDataToText {
                 break;
             }
         }
-        if (!estacionado) {
+        if (estacionado && clienteEstacionado != null) {
+            double arrecadacaoAnterior = clienteEstacionado.arrecadadoTotal();
+            if (clienteEstacionado.arrecadadoTotal() > arrecadacaoAnterior) {
+                notify(); // Método para notificar a mudança no Top 5 aos observadores
+            }
+        } else {
             throw new Exception("Carro já está estacionado");
         }
     }
@@ -205,11 +204,10 @@ public class Estacionamento implements Observable, IDataToText {
      * @return Lista com os dados dos cinco principais clientes no formato de texto.
      */
     public String top5Clientes(int mes) {
-        // Criar uma lista ordenada dos clientes com base na arrecadação no mês
-        // fornecido
+        // Criar uma lista ordenada dos clientes com base na arrecadação no mês fornecido
         List<Cliente> topClientes = new ArrayList<>(clientes.values());
         topClientes.sort(Comparator.comparingDouble(cliente -> -cliente.arrecadadoNoMes(mes)));
-
+    
         // Selecionar os cinco principais clientes ou todos, caso haja menos de cinco
         int count = Math.min(5, topClientes.size());
         StringBuilder result = new StringBuilder("Top 5 Clientes em " + mes + ":\n");
@@ -222,14 +220,14 @@ public class Estacionamento implements Observable, IDataToText {
                     .append(cliente.arrecadadoNoMes(mes))
                     .append("\n");
         }
-
+    
         String top5 = result.toString(); // Supondo que 'result' é a lista dos top 5 clientes
-
+    
         notify(top5); // Notifica os observadores sobre a atualização no top 5
-
+    
         return top5;
-
     }
+    
 
     /**
      * Busca um cliente pelo ID.
@@ -254,14 +252,14 @@ public class Estacionamento implements Observable, IDataToText {
      * @return double valor pago
      * @throws Exception
      */
-    public double sair(String placa, TipoCliente tipo) throws Exception {
+    public double sair(String placa) throws Exception {
         double valorPago = -1.0; // Definir um valor padrão para indicar que o veículo não foi encontrado
 
         for (Cliente cliente : clientes.values()) {
             Veiculo veiculo = cliente.possuiVeiculo(placa);
 
             if (veiculo != null) {
-                valorPago = veiculo.sair(tipo); // Atualizar o horário de saída
+                valorPago = veiculo.sair(); // Atualizar o horário de saída
             }
         }
         if (valorPago < 0.0) {
@@ -328,27 +326,13 @@ public class Estacionamento implements Observable, IDataToText {
         return data.toString();
     }
 
-    public void estacionarComServicos(String placa, TipoCliente tipo, Servico servicoSelecionado) throws Exception {
-         boolean estacionado = false;
-
-        for (Vaga vaga : filaPrioridades) {
-            if (vaga.disponivel() && !estacionado) {
-                for (Cliente cliente : clientes.values()) {
-                    Veiculo veiculo = cliente.possuiVeiculo(placa);
-                    if (veiculo != null) {
-                        veiculo.estacionar(vaga, tipo);
-                        estacionado = true;
-                        break;
-                    }
-                }
-            }
-            if (estacionado) {
-                break;
-            }
+    public Veiculo buscarVeiculo(String placa) throws Exception{
+        for (Cliente cliente : clientes.values()) {
+            Veiculo v = cliente.possuiVeiculo(placa);
+            if(v != null){
+                return v;
+            }            
         }
-        if (!estacionado) {
-            throw new Exception("Carro já está estacionado");
-        }
+        throw new Exception("Nao encontrado veiculo");
     }
-
 }
