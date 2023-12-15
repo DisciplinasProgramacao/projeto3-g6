@@ -65,6 +65,13 @@ public class Veiculo implements IDataToText {
         usos.add(novoUso);
     }
 
+    /**
+     * Estaciona um veículo em uma vaga para o cliente com base no tipo de cliente.
+     *
+     * @param vaga    Vaga onde o veículo será estacionado.
+     * @param entrada Horário de entrada do veículo.
+     * @param saida   Horário de saída do veículo.
+     */
     public void estacionar(Vaga vaga, LocalDateTime entrada, LocalDateTime saida) {
         UsoDeVaga novoUso;
 
@@ -84,6 +91,12 @@ public class Veiculo implements IDataToText {
         estacionado = true;
     }
 
+    /**
+     * Calcula o valor total a ser pago ao sair do estacionamento.
+     *
+     * @return O valor total a ser pago.
+     * @throws Exception Se houver algum erro no cálculo do valor.
+     */
     public double sair() throws Exception {
 
         double totalPago = 0.0;
@@ -170,10 +183,20 @@ public class Veiculo implements IDataToText {
         return placa;
     }
 
+    /**
+     * Define o tipo de cliente para o estacionamento.
+     *
+     * @param tipo Tipo de cliente a ser definido.
+     */
     public void definirTipo(TipoCliente tipo) {
         this.tipoCliente = tipo;
     }
 
+    /**
+     * Verifica se há um veículo estacionado no momento.
+     *
+     * @return true se houver um veículo estacionado, false caso contrário.
+     */
     public boolean estaEstacionado() {
         return this.estacionado;
     }

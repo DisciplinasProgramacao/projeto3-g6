@@ -8,14 +8,29 @@ import java.time.temporal.ChronoUnit;
  */
 public class UsoHorista extends UsoDeVaga {
 
+     /**
+     * Construtor para registrar a entrada em uma vaga
+     * @param vaga    Vaga utilizada.
+     */
     public UsoHorista(Vaga vaga) {
         super(vaga);
     }
 
+     /**
+     * Construtor para registrar a entrada em uma vaga com a contratação de um serviço.
+     *
+     * @param vaga    Vaga utilizada.
+     * @param servico Serviço contratado.
+     */
     public UsoHorista(Vaga vaga, Servico servico) {
         super(vaga, servico);
     }
-
+  /**
+     * Construtor para registrar a entrada em uma vaga com data de saida e entrada definidas
+     * @param vaga    Vaga utilizada.
+     * @param entrada horario de entrada
+     * @param saida  horario saida
+     */
     public UsoHorista(Vaga vaga, LocalDateTime entrada, LocalDateTime saida) {
         super(vaga, entrada, saida);
     }

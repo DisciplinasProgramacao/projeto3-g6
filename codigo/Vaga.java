@@ -2,8 +2,8 @@
  * Classe que representa uma vaga no estacionamento.
  */
 public class Vaga implements Comparable<Vaga>, IDataToText {
-    private String id;           // Identificação única da vaga
-    private boolean disponivel;  // Indica se a vaga está disponível
+    private String id; // Identificação única da vaga
+    private boolean disponivel; // Indica se a vaga está disponível
 
     /**
      * Construtor para criar uma Vaga com uma identificação única.
@@ -12,10 +12,9 @@ public class Vaga implements Comparable<Vaga>, IDataToText {
      */
     public Vaga(String id) {
         this.id = id;
-        this.disponivel = true;  // Inicialmente, a vaga está disponível
+        this.disponivel = true; // Inicialmente, a vaga está disponível
     }
 
-   
     /**
      * Obtém a disponibilidade da vaga.
      *
@@ -25,12 +24,11 @@ public class Vaga implements Comparable<Vaga>, IDataToText {
         return this.disponivel;
     }
 
-   
-
     /**
      * Estaciona um veículo na vaga.
      *
-     * @return true se o veículo foi estacionado com sucesso, false se a vaga já estiver ocupada
+     * @return true se o veículo foi estacionado com sucesso, false se a vaga já
+     *         estiver ocupada
      */
     public boolean estacionar() {
         if (disponivel) {
@@ -44,7 +42,8 @@ public class Vaga implements Comparable<Vaga>, IDataToText {
     /**
      * Libera a vaga, indicando que o veículo saiu.
      *
-     * @return true se a vaga foi liberada com sucesso, false se a vaga já estiver livre
+     * @return true se a vaga foi liberada com sucesso, false se a vaga já estiver
+     *         livre
      */
     public boolean sair() {
         if (!disponivel) {
@@ -55,7 +54,16 @@ public class Vaga implements Comparable<Vaga>, IDataToText {
         }
     }
 
-
+    /**
+     * Método de comparação para ordenar vagas com base na disponibilidade.
+     *
+     * @param outraVaga Vaga a ser comparada.
+     * @return Um valor negativo se esta vaga está disponível e outraVaga está
+     *         ocupada,
+     *         um valor positivo se esta vaga está ocupada e outraVaga está
+     *         disponível,
+     *         ou zero se ambas têm a mesma disponibilidade.
+     */
     @Override
     public int compareTo(Vaga outraVaga) {
         if (this.disponivel && !outraVaga.disponivel()) {
@@ -67,8 +75,7 @@ public class Vaga implements Comparable<Vaga>, IDataToText {
         }
     }
 
-
-      /**
+    /**
      * Método que retorna uma representação textual dos dados da vaga.
      *
      * @return String com os dados da vaga
@@ -81,5 +88,4 @@ public class Vaga implements Comparable<Vaga>, IDataToText {
         return data.toString();
     }
 
-   
 }

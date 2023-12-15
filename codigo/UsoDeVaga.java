@@ -11,16 +11,38 @@ public abstract class UsoDeVaga implements IDataToText {
     double valorPago; // Valor pago pelo uso da vaga
     Servico servico; // Serviço contratado durante o uso da vaga
 
-    public UsoDeVaga(Vaga vaga){
+   
+    /**
+     * Construtor para registrar a entrada em uma vaga.
+     *
+     * @param vaga Vaga utilizada.
+     */
+    public UsoDeVaga(Vaga vaga) {
         this.vaga = vaga;
         entrada = LocalDateTime.now();
     }
-    public UsoDeVaga(Vaga vaga, Servico servico){
+
+    /**
+     * Construtor para registrar a entrada em uma vaga com a contratação de um serviço.
+     *
+     * @param vaga    Vaga utilizada.
+     * @param servico Serviço contratado.
+     */
+    public UsoDeVaga(Vaga vaga, Servico servico) {
         this.vaga = vaga;
         contratarServico(servico);
         entrada = LocalDateTime.now();
     }
+
+    /**
+     * Construtor para definir um uso de vaga com horário de entrada e saída específicos.
+     *
+     * @param vaga     Vaga utilizada.
+     * @param entrada  Horário de entrada.
+     * @param saida    Horário de saída.
+     */
     public UsoDeVaga(Vaga vaga, LocalDateTime entrada, LocalDateTime saida) {
+        this.vaga = vaga;
         this.entrada = entrada;
         this.saida = saida;
     }
@@ -73,10 +95,21 @@ public abstract class UsoDeVaga implements IDataToText {
      */
     public abstract double valorPago();
 
-
+/**
+     * Metodo para retornar a entrada
+     *
+     * @return entrada
+     */
     public LocalDateTime getEntrada() {
         return entrada;
     }
+
+    
+/**
+     * Metodo para retornar a saida
+     *
+     * @return saida
+     */
     public LocalDateTime getSaida() {
         return saida;
     }

@@ -11,6 +11,11 @@ public interface Observer {
      */
     void atualizar(Integer mes, Cliente cliente);
 
+    /**
+     * Método chamado para informar o top5do mes
+     * @param mes mes que vai ser procurado
+     * @return string com informaçoes do top 5
+     */
     String getUltimoTop5(Integer mes);
 
   

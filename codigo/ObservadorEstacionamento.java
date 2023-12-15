@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.Collections;
+
 /**
  * Classe que representa um Observador para o Estacionamento.
  */
@@ -12,8 +13,8 @@ public class ObservadorEstacionamento implements Observer {
 
     /**
      * Método chamado quando há uma atualização no Top 5.
-     *
-     * @param top5 String contendo as informações do Top 5 atualizado.
+     *@param mes da atualisaçao
+     * @param cliente a ser comparado
      */
     @Override
     public void atualizar(Integer mes, Cliente c) {
@@ -30,12 +31,12 @@ public class ObservadorEstacionamento implements Observer {
 
     /**
      * Obtém o último Top 5 salvo pelo observador.
-     *
+     * 
+     * @param mes do top5
      * @return Último Top 5 atualizado.
      */
     public String getUltimoTop5(Integer mes) {
         List<Map.Entry<String, Double>> listaEntradas = new ArrayList<>(this.clientesMes.get(mes).entrySet());
-
 
         listaEntradas.sort(Map.Entry.comparingByValue(Collections.reverseOrder()));
         Map<String, Double> hashMapOrdenado = new LinkedHashMap<>();
@@ -61,5 +62,4 @@ public class ObservadorEstacionamento implements Observer {
         return result.toString();
     }
 
-    
 }
