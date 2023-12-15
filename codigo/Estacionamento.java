@@ -39,7 +39,7 @@ public class Estacionamento implements Observable<Cliente>, IDataToText {
      *
      * @param veiculo Veículo a ser adicionado.
      * @param idCli   ID do cliente ao qual o veículo será associado.
-     * @throws Exception
+     * @throws Exception caso veiculo ja exista
      */
     public void addVeiculo(Veiculo veiculo, String idCli) throws Exception {
         Cliente cliente = clientes.get(idCli);
@@ -76,8 +76,7 @@ public class Estacionamento implements Observable<Cliente>, IDataToText {
     /**
      * Estaciona um veículo no estacionamento.
      *
-     * @param placa Placa do veículo a ser estacionado.
-     * @param time  Horário de entrada do veículo.
+     * @param veiculo Veiculo a ser estacionado
      * @throws Exception Se o carro já estiver estacionado.
      */
     public void estacionar(Veiculo veiculo) throws Exception {
@@ -225,7 +224,7 @@ public class Estacionamento implements Observable<Cliente>, IDataToText {
      * 
      * @param placa Placa do veículo a ser removido.
      * @return double valor pago
-     * @throws Exception
+     * @throws Exception Caso veiculo nao esteja estacionado
      */
     public double sair(String placa) throws Exception {
         // Obtém o mês atual do sistema
@@ -270,11 +269,11 @@ public class Estacionamento implements Observable<Cliente>, IDataToText {
     }
 
     /**
-     * Notifica os observadores sobre a atualização no top 5.
-     *
-     * @param top5 Lista com os dados dos cinco principais clientes no formato de
-     *             texto.
-     */
+ * Notifica os observadores sobre uma atualização associada a um determinado mês e item.
+ *
+ * @param mes  O mês associado à notificação.
+ * @param c  O cliente a ser comparado
+ */
     @Override
     public void notify(Integer mes, Cliente c) {
         for (Observer observer : top5Observers) {

@@ -67,7 +67,7 @@ public abstract class UsoDeVaga implements IDataToText {
      * e os serviços contratados durante o uso da vaga.
      *
      * @return O valor total a ser pago pelo uso da vaga
-     * @throws Exception
+     * @throws Exception Cao tempo minimo do servico nao seja atingido
      */
     public double sair() throws Exception {
         vaga.sair(); // Define a vaga como disponível

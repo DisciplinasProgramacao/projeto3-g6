@@ -18,9 +18,11 @@ public interface Observable<T> {
     public void detach(Observer observer);
 
     /**
-     * Notifica os observadores sobre alguma atualização.
+     * Notifica os observadores sobre uma atualização associada a um determinado mês
+     * e item.
      *
-     * @param top5 Informações a serem enviadas aos observadores.
+     * @param mes  O mês associado à notificação.
+     * @param item O item a ser notificado.
      */
     public void notify(Integer mes, T item);
 }

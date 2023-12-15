@@ -22,9 +22,8 @@ public class Veiculo implements IDataToText {
 
     /**
      * Estaciona o veículo em uma vaga de acordo com o tipo de cliente.
-     * 
      * @param vaga        A vaga onde o veículo será estacionado
-     * @param tipoCliente O tipo de cliente (Mensalista, Horista, Turno)
+     * @param tipo O tipo de cliente (Mensalista, Horista, Turno)
      */
     public void estacionar(Vaga vaga, TipoCliente tipo) {
         UsoDeVaga novoUso;

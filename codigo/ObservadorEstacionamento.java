@@ -14,7 +14,7 @@ public class ObservadorEstacionamento implements Observer {
     /**
      * Método chamado quando há uma atualização no Top 5.
      *@param mes da atualisaçao
-     * @param cliente a ser comparado
+     * @param c a ser comparado
      */
     @Override
     public void atualizar(Integer mes, Cliente c) {

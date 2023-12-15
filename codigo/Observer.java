@@ -6,8 +6,8 @@ public interface Observer {
 
     /**
      * Método chamado para atualizar o observador com informações específicas.
-     *
-     * @param top5 Informações a serem atualizadas no observador.
+     *@param mes Atualizar cliente top5
+     *@param cliente Cliente a ser comparado
      */
     void atualizar(Integer mes, Cliente cliente);
 
